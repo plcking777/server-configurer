@@ -33,7 +33,7 @@ for step in data["steps"]:
         action_value = " ".join(action_split[1:])
 
         if action_type == "cmd":
-            result = subprocess.run(["ssh", ssh_result, action_value], stdout=subprocess.PIPE)
+            result = subprocess.run(["ssh", "-T", ssh_result, f"'{action_value}'"], stdout=subprocess.PIPE)
             
             print("    Running  ", action_value)
             
