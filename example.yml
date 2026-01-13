@@ -2,5 +2,5 @@ users:
   wout:
     actions:
       - cmd echo "Hello world"
-      - expect "^Hello world$"
-      - sleep 10
+      - expect ".*world.*"
+      - pause 1

@@ -2,6 +2,7 @@ import subprocess
 import sys
 import re
 import yaml
+import time
 
 
 if len(sys.argv) != 3:
@@ -9,21 +10,39 @@ if len(sys.argv) != 3:
 
 # Arg 1: ssh template
 ssh_template = sys.argv[1]
-print(ssh_template)
 
 # Arg 2: YML file
 yml_file = sys.argv[2]
-print(yml_file)
-
 
 config_file = open(yml_file, "r")
 data = yaml.load(config_file, Loader=yaml.FullLoader)
 
 
-print(data)
-
 
 for user in data["users"]:
     ssh_result = ssh_template.format(user=user)
-    result = subprocess.run(["ssh", "-T", ssh_result, "echo test"], capture_output=True, text=True)
-    print("res: ", result)
+    
+    print(ssh_result + ":")
+    
+    prev_result = None
+    for action in data["users"][user]["actions"]:
+        
+        action_split = action.split(" ")
+        action_type = action_split[0]
+        action_value = " ".join(action_split[1:])
+
+        if action_type == "cmd":
+            result = subprocess.run(["ssh", "-T", ssh_result, action_value], stdout=subprocess.PIPE)
+            
+            print("    Running  ", action_value)
+            
+            prev_result = result.stdout.decode("utf-8")
+        elif action_type == "expect":
+
+            action_value = action_value[1:len(action_value) - 1]
+            match = re.match(action_value, prev_result)
+            if not match:
+                raise Exception(f"\"{prev_result} did not match the regex: {action_value}")
+        elif action_type == "pause":
+            print("    Pausing for", action_value)
+            time.sleep(int(action_value))
