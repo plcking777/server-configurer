@@ -1,6 +1,14 @@
-users:
-  wout:
-    actions:
-      - cmd echo "Hello world"
-      - expect ".*world.*"
-      - pause 1
+steps:
+  - step1:
+      user: wout
+      actions:
+        - cmd echo "Hello world"
+        - expect ".*world.*"
+        - pause 1
+    
+  - step2:
+      user: wout
+      actions:
+        - cmd echo "Bye world"
+        - expect "^Bye world$"
+        - pause 1

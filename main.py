@@ -19,13 +19,14 @@ data = yaml.load(config_file, Loader=yaml.FullLoader)
 
 
 
-for user in data["users"]:
-    ssh_result = ssh_template.format(user=user)
+for step in data["steps"]:
+    step = list(step.values())[0]
+    ssh_result = ssh_template.format(user=step["user"])
     
     print(ssh_result + ":")
     
     prev_result = None
-    for action in data["users"][user]["actions"]:
+    for action in step["actions"]:
         
         action_split = action.split(" ")
         action_type = action_split[0]
