@@ -1,0 +1,6 @@
+users:
+  wout:
+    actions:
+      - cmd echo "Hello world"
+      - expect "^Hello world$"
+      - sleep 10
